@@ -6,10 +6,11 @@ for more
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
-from skimage import data
 from phase_retrieval.correlation import scanned_correlation
+from scipy.ndimage import gaussian_filter
 
-image = np.random.rand(50,50)
+image = gaussian_filter(np.random.rand(50,50)*10, 2)
+image -= np.mean(image)
 
 
 
@@ -31,7 +32,7 @@ ax.set_ylim(0,49)
 plt.show()
 
 # add sinusoidal oscillation to row coordinates
-dst_rows = src[:, 1] - np.sin(np.linspace(0, np.pi, src.shape[0]))
+dst_rows = src[:, 1] - np.sin(np.linspace(0, np.pi, src.shape[0]))*3
 dst_cols = src[:, 0]
  
 dst = np.vstack([dst_cols, dst_rows]).T

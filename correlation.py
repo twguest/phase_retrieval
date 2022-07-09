@@ -23,6 +23,7 @@ from felpy.utils.vis_utils import Grids, add_colorbar
 from felpy.utils.fig_combine import combine_figures
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tqdm import tqdm
+from felpy.analysis.scalar.centroid import get_com
 
 
 def get_boundaries(shape,wx,wy,ss = 1):
@@ -112,7 +113,7 @@ def shift_by_correlation(arr1, arr2, cx, cy, wx, wy, step_size = 1, plot = False
              
             axes = glob.axes
             
-            im1 = axes['a'].imshow(arr1, cmap = 'bone', extent = ex1)
+            im1 = axes['a'].imshow(arr1, cmap = 'bone', extent = ex1, vmin = np.min(arr1), vmax = np.max(arr1))
             rect = patches.Rectangle((cy-wy//2, cx-wx//2), width = wx, height = wy, linewidth=1, edgecolor='r', facecolor='none')
             axes['a'].add_patch(rect)
             
@@ -129,10 +130,11 @@ def shift_by_correlation(arr1, arr2, cx, cy, wx, wy, step_size = 1, plot = False
             cb.set_ticks([np.min(arr1),np.max(arr1)])
             cb.set_ticklabels(['$I_{min}$','$I_{max}$'])
              
+            import matplotlib.colors
+            cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["black", "green"])            
             
-            
-            im2 = axes['b'].imshow(arr1_c, cmap = 'bone', extent = ex2)
-            
+            im2 = axes['b'].imshow(arr1_c, cmap = 'bone', extent = ex2,alpha = 1)
+ 
             cb = add_colorbar(im2, glob.axes['b'], glob.fig,
                          orientation = 'vertical',
                          clabel = "Intensity",
@@ -145,6 +147,8 @@ def shift_by_correlation(arr1, arr2, cx, cy, wx, wy, step_size = 1, plot = False
             
             cb.set_ticks([np.min(arr1_c),np.max(arr1_c)])
             cb.set_ticklabels(['$I_{min}$','$I_{max}$'])
+            
+ 
              
               
              
@@ -177,8 +181,8 @@ def scanned_correlation(arr1, arr2, wx, wy, step_size = 1, plot = False, sdir = 
     results = np.zeros([boundaries[1], boundaries[3],2])
     itr = 0
     
-    for cx in tqdm(range(boundaries[0], boundaries[1])):
-        for cy in range(boundaries[2], boundaries[3]):
+    for cx in tqdm(range(boundaries[0], boundaries[1], step_size)):
+        for cy in range(boundaries[2], boundaries[3], step_size):
     
             [sx, sy], grid = shift_by_correlation(arr1, arr2, cx, cy, wx, wy, step_size = step_size, plot = plot, ex = None)
             
@@ -187,7 +191,7 @@ def scanned_correlation(arr1, arr2, wx, wy, step_size = 1, plot = False, sdir = 
                 grid.fig.savefig(sdir + "cplot_{:04}.png".format(itr), dpi = dpi)
                 
             itr += 1
-            
+            print(sx,sy)
             results[cx, cy, 0] = sx
             results[cx, cy, 1] = sy
             

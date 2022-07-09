@@ -21,7 +21,7 @@ from matplotlib import pyplot as plt
 import matplotlib.patches as patches
 from felpy.utils.vis_utils import Grids, add_colorbar
 from felpy.utils.fig_combine import combine_figures
-from phase_retrieval.correlation import cross_correlation, cc_shift, shift_image, get_boundaries, shift_by_correlation, scanned_correlation
+from FELpy.phase_retrieval.correlation import cross_correlation, cc_shift, shift_image, get_boundaries, shift_by_correlation, scanned_correlation
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
